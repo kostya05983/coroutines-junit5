@@ -1,0 +1,82 @@
+plugins {
+    id 'org.jetbrains.kotlin.jvm' version '1.3.50'
+    id "org.jlleitschuh.gradle.ktlint" version "8.2.0"
+    id "com.jfrog.bintray" version "1.8.4"
+    id "maven-publish"
+}
+
+version '0.1'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.3.50"
+    implementation group: 'javax.validation', name: 'validation-api', version: '2.0.1.Final'
+    implementation group: 'org.jetbrains.kotlin', name: 'kotlin-reflect', version: '1.3.50'
+    implementation group: 'org.mockito', name: 'mockito-core', version: '3.0.0'
+    implementation group: 'org.junit.jupiter', name: 'junit-jupiter-engine', version: '5.3.2'
+    test.useJUnitPlatform()
+}
+compileJava.dependsOn(processResources)
+
+
+publishing {
+    publications {
+        mavenPublication(MavenPublication) {
+            from components.java
+            artifact sourcesJar {
+                classifier "sources"
+            }
+            artifact javadocJar {
+                classifier "javadoc"
+            }
+            groupId 'org.it-zoo'
+            artifactId 'coroutines-junit5'
+            version project.version
+        }
+    }
+}
+
+bintray {
+    user = System.getProperty('bintray.user')
+    key = System.getProperty('bintray.key')
+    publications = ['mavenPublication']
+
+    pkg {
+        repo = 'kontur'
+        name = 'coroutines-junit5'
+        userOrg = 'kostya05983'
+        licenses = ['MIT']
+        vcsUrl = 'https://github.com/kostya05983/coroutines-junit5'
+        version {
+            name = project.version
+            desc = project.version
+            released = new Date()
+        }
+    }
+}
+
+compileKotlin {
+    kotlinOptions.jvmTarget = "1.8"
+}
+compileTestKotlin {
+    kotlinOptions.jvmTarget = "1.8"
+}
+
+task sourcesJar(type: Jar, dependsOn: classes) {
+    classifier = 'sources'
+    from sourceSets.main.allSource
+}
+
+javadoc.failOnError = false
+task javadocJar(type: Jar, dependsOn: javadoc) {
+    classifier = 'javadoc'
+    from javadoc.destinationDir
+}
+
+artifacts {
+    archives sourcesJar
+    archives javadocJar
+}
