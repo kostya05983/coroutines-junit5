@@ -1,4 +1,4 @@
-package org.it.zoo.junit5
+package org.it.zoo.junit5.coroutines
 
 import java.util.concurrent.CountDownLatch
 
