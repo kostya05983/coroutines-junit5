@@ -1,6 +1,7 @@
 package org.it.zoo.junit5.coroutines
 
 import java.util.concurrent.CountDownLatch
+import java.util.concurrent.TimeUnit
 
 class CoroutinesTestContext {
     private companion object {
@@ -39,5 +40,9 @@ class CoroutinesTestContext {
      */
     fun causeOfFailure(): Throwable? {
         return throwableReference
+    }
+
+    fun awaitCompetition(timeout: Long, unit: TimeUnit): Boolean {
+        return failed() && releaseLatch.await(timeout, unit)
     }
 }
