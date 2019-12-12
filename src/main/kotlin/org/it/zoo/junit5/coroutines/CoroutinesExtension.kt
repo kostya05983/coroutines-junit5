@@ -20,7 +20,7 @@ class CoroutinesExtension : ParameterResolver, BeforeTestExecutionCallback, Afte
     BeforeEachCallback, AfterEachCallback, AfterAllCallback {
     private companion object {
         const val DEFAULT_CONTEXT_LIST_KEY = "context_list"
-        const val DEFAULT_TIMEOUT_DURATION = 10000
+        const val DEFAULT_TIMEOUT_DURATION = 30000L
         val DEFAULT_TIMEOUT_UNIT = TimeUnit.MILLISECONDS
     }
 
@@ -35,6 +35,7 @@ class CoroutinesExtension : ParameterResolver, BeforeTestExecutionCallback, Afte
             DEFAULT_CONTEXT_LIST_KEY,
             { mutableListOf<CoroutinesTestContext>() }) as MutableList<CoroutinesTestContext>
         contexts.add(coroutinesTestContext)
+        store.put(DEFAULT_CONTEXT_LIST_KEY, contexts)
         return coroutinesTestContext
     }
 
@@ -82,9 +83,12 @@ class CoroutinesExtension : ParameterResolver, BeforeTestExecutionCallback, Afte
                 }
             }
         }
+        if (extensionContext.parent.isPresent) {
+            joinActiveTestContext(extensionContext.parent.get())
+        }
     }
 
-    private fun getTimeoutParams(extensionContext: ExtensionContext): Pair<Int, TimeUnit> {
+    private fun getTimeoutParams(extensionContext: ExtensionContext): Pair<Long, TimeUnit> {
         val testMethod = extensionContext.testMethod
         return if (testMethod.isPresent && testMethod.get().isAnnotationPresent(Timeout::class.java)) {
             val timeout = testMethod.get().getAnnotation(Timeout::class.java)

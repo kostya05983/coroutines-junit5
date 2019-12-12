@@ -43,6 +43,6 @@ class CoroutinesTestContext {
     }
 
     fun awaitCompetition(timeout: Long, unit: TimeUnit): Boolean {
-        return failed() && releaseLatch.await(timeout, unit)
+        return failed() || releaseLatch.await(timeout, unit)
     }
 }
