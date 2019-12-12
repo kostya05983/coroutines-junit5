@@ -71,15 +71,16 @@ class CoroutinesExtension : ParameterResolver, BeforeTestExecutionCallback, Afte
                     if (context.failed()) {
                         val throwable = context.causeOfFailure()
                         if (throwable is Exception) {
-                            throw  throwable
+                            throw throwable
                         } else {
                             throw AssertionError(throwable)
                         }
                     }
                 } else {
-                    throw TimeoutException("The test execution timed out. Make sure your asynchronous code "
-                        + "includes calls to either CoroutinesTestContext.completeNow(), CoroutinesTestContext.failNow() "
-                        + "or Checkpoint#flag()");
+                    throw TimeoutException("The test execution timed out. Make sure your asynchronous code " +
+                        "includes calls to either CoroutinesTestContext.completeNow(), " +
+                        "CoroutinesTestContext.failNow() " +
+                        "or Checkpoint#flag()")
                 }
             }
         }
